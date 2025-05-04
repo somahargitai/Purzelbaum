@@ -15,3 +15,5 @@ const sentences = [
     sentence: 'Der blaue Himmel ist sehr hoch',
   },
 ];
+
+export default sentences;

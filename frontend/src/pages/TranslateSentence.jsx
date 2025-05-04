@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useAtom } from 'jotai';
-import { Check, ArrowRight, Search, Loader2 } from 'lucide-react';
-import sentences from '../../learning-material/sentences';
+import { Check, ArrowRight, Search, Loader2, AlertCircle } from 'lucide-react';
 import { currentSentenceAtom, sentenceAnalysisAtom, isLoadingAtom, errorAtom } from '../atoms/sentenceAtoms';
 import AnimatedTextComparison from '../components/AnimatedTextComparison';
 import Button from '../components/Button';
+import { fetchSentences } from '../services/sentenceService';
 
 const TranslateSentence = () => {
   const [sentence, setSentence] = useAtom(currentSentenceAtom);
@@ -13,26 +13,59 @@ const TranslateSentence = () => {
   const [error, setError] = useAtom(errorAtom);
   const [userInput, setUserInput] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [availableSentences, setAvailableSentences] = useState([]);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const nextButtonRef = useRef(null);
 
   useEffect(() => {
-    // Load a random sentence when component mounts
-    const randomIndex = Math.floor(Math.random() * sentences.length);
-    const randomSentence = sentences[randomIndex];
-    setSentence(randomSentence);
+    const controller = new AbortController();
+
+    const loadSentences = async () => {
+      try {
+        setIsLoading(true);
+        const sentences = await fetchSentences(controller.signal);
+        
+        if (sentences.length === 0) {
+          setError('No sentences available. Please check your configuration or contact support.');
+          return;
+        }
+
+        setAvailableSentences(sentences);
+        const randomIndex = Math.floor(Math.random() * sentences.length);
+        setSentence(sentences[randomIndex]);
+      } catch (err) {
+        // Only set error if it's not an abort error
+        if (err.name !== 'AbortError') {
+          setError(err.message);
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadSentences();
+
+    return () => {
+      controller.abort();
+    };
   }, [setSentence]);
 
   const handleNext = () => {
+    if (availableSentences.length === 0) {
+      setError('No sentences available. Please check your configuration or contact support.');
+      return;
+    }
+
     setUserInput('');
-    const randomIndex = Math.floor(Math.random() * sentences.length);
-    const randomSentence = sentences[randomIndex];
-    setSentence(randomSentence);
+    const randomIndex = Math.floor(Math.random() * availableSentences.length);
+    setSentence(availableSentences[randomIndex]);
     setIsSubmitted(false);
     setAnalysis(null);
   };
 
   const handleAnalyze = async () => {
     try {
-      setIsLoading(true);
+      setIsAnalyzing(true);
       setError(null);
 
       const response = await fetch('http://localhost:3005/api/openai/explainTranslation', {
@@ -56,20 +89,50 @@ const TranslateSentence = () => {
     } catch (err) {
       setError(err.message);
     } finally {
-      setIsLoading(false);
+      setIsAnalyzing(false);
     }
   };
 
   const handleSubmit = e => {
     e.preventDefault();
     setIsSubmitted(true);
+    // Focus the Next button after a short delay to ensure it's rendered
+    setTimeout(() => {
+      nextButtonRef.current?.focus();
+    }, 100);
   };
 
   const handleKeyDown = e => {
     if (e.key === 'Enter' && !e.shiftKey) {
-      handleSubmit(e);
+      if (!isSubmitted) {
+        handleSubmit(e);
+      } else {
+        // If already submitted, pressing Enter should trigger the Next button
+        handleNext();
+      }
     }
   };
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center p-8 text-center">
+        <AlertCircle className="mb-4 h-12 w-12 text-red-500" />
+        <h2 className="mb-2 text-xl font-bold text-red-500">Error</h2>
+        <p className="mb-4 text-gray-300">{error}</p>
+        <Button onClick={() => window.location.reload()} variant="secondary">
+          Try Again
+        </Button>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <Loader2 className="h-8 w-8 animate-spin text-gray-300" />
+      </div>
+    );
+  }
 
   return (
     <div className="w-full p-4">
@@ -85,6 +148,8 @@ const TranslateSentence = () => {
             <div className="mt-4 mb-4">
               <input
                 type="text"
+                id="translation-input"
+                name="translation"
                 className="font-oswald w-full text-5xl break-words whitespace-normal focus:outline-none"
                 placeholder="__"
                 aria-label="Translation input"
@@ -103,13 +168,13 @@ const TranslateSentence = () => {
         {isSubmitted ? (
           <Button
             onClick={handleAnalyze}
-            disabled={isLoading || !isSubmitted}
+            disabled={isAnalyzing || !isSubmitted}
             variant="secondary"
             size="lg"
-            className="min-w-[160px]"
+            className={`min-w-[160px] ${isAnalyzing ? 'border-yellow-300 text-yellow-300' : ''}`}
           >
-            {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Search className="h-5 w-5" />}
-            <span>{isLoading ? 'Analyzing...' : 'Analyze Translation'}</span>
+            {isAnalyzing ? <Loader2 className="h-5 w-5 animate-spin" /> : <Search className="h-5 w-5" />}
+            <span>{isAnalyzing ? 'Analyzing...' : 'Analyze Translation'}</span>
           </Button>
         ) : (
           <Button onClick={handleSubmit} size="lg">
@@ -117,17 +182,19 @@ const TranslateSentence = () => {
             <span>Check Translation</span>
           </Button>
         )}
-        <Button onClick={handleNext} size="lg">
+        <Button 
+          onClick={handleNext} 
+          size="lg"
+          ref={nextButtonRef}
+          tabIndex={isSubmitted ? 0 : -1}
+        >
           <ArrowRight className="mr-2 inline-block h-5 w-5" />
           Next
         </Button>
       </div>
 
-      {error && <div className="mt-4 text-red-500">Error: {error}</div>}
-
       {analysis && (
         <div className="full-width mt-8 text-left">
-          {/* <h3 className="mb-2 text-lg font-bold">Grammar Analysis:</h3> */}
           <h2 className="mb-2 text-left font-bold">Grammar Analysis</h2>
           {analysis.correctConjugations && analysis.correctConjugations.length > 0 && (
             <div className="mb-4">

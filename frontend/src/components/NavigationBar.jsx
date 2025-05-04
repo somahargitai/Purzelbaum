@@ -40,10 +40,6 @@ const NavigationBar = () => {
               <Link to="/" className="hover:text-primary font-bold transition-colors">
                 Home
               </Link>
-
-              <Link to="/smart-sentences" className="hover:text-primary font-bold transition-colors">
-                Smart Sentences
-              </Link>
               <Link to="/translate-sentence" className="hover:text-primary font-bold transition-colors">
                 Translate Sentence
               </Link>
@@ -99,13 +95,6 @@ const NavigationBar = () => {
                     onClick={() => setIsMenuOpen(false)}
                   >
                     About
-                  </Link>
-                  <Link
-                    to="/smart-sentences"
-                    className="hover:text-primary py-2 text-3xl text-white transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Smart Sentences
                   </Link>
                   <Link
                     to="/translate-sentence"
