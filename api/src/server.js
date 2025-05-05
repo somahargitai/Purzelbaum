@@ -16,7 +16,7 @@ app.use(express.json());
 
 // Routes
 app.use("/hello", (req, res) => {
-  res.send("Hello World");
+  res.send("Hello World 👋\n");
 });
 app.use("/api/openai", openaiRoutes);
 app.use("/api/database", databaseRoutes);
