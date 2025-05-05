@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { Routes, Route } from 'react-router-dom';
 
@@ -7,8 +6,6 @@ import NavigationBar from './components/NavigationBar';
 import { Home, About, TranslateSentence } from './pages/index';
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
     <>
       <NavigationBar />

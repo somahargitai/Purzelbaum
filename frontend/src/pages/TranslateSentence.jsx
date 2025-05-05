@@ -7,6 +7,8 @@ import Button from '../components/Button';
 import { fetchSentences } from '../services/sentenceService';
 
 const TranslateSentence = () => {
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   const [sentence, setSentence] = useAtom(currentSentenceAtom);
   const [analysis, setAnalysis] = useAtom(sentenceAnalysisAtom);
   const [isLoading, setIsLoading] = useAtom(isLoadingAtom);
@@ -24,7 +26,7 @@ const TranslateSentence = () => {
       try {
         setIsLoading(true);
         const sentences = await fetchSentences(controller.signal);
-        
+
         if (sentences.length === 0) {
           setError('No sentences available. Please check your configuration or contact support.');
           return;
@@ -68,7 +70,7 @@ const TranslateSentence = () => {
       setIsAnalyzing(true);
       setError(null);
 
-      const response = await fetch('http://localhost:3005/api/openai/explainTranslation', {
+      const response = await fetch(`${apiUrl}/api/openai/explainTranslation`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -182,12 +184,7 @@ const TranslateSentence = () => {
             <span>Check Translation</span>
           </Button>
         )}
-        <Button 
-          onClick={handleNext} 
-          size="lg"
-          ref={nextButtonRef}
-          tabIndex={isSubmitted ? 0 : -1}
-        >
+        <Button onClick={handleNext} size="lg" ref={nextButtonRef} tabIndex={isSubmitted ? 0 : -1}>
           <ArrowRight className="mr-2 inline-block h-5 w-5" />
           Next
         </Button>
