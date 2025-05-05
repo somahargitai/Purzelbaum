@@ -25,6 +25,3 @@ dist-ssr
 
 # Environment variables
 .env
-
-# Learning material
-learning-material/sentences.js
