@@ -1,5 +1,7 @@
 # Purzelbaum - German Learning with OpenAI
 
+![Purzelbaum Screenshot](./assets/Purzelbaum_screenshot.png)
+
 A language learning application that uses OpenAI to act as a digital teacher fixing your errors.
 
 ## Tech Stack
@@ -18,7 +20,7 @@ A language learning application that uses OpenAI to act as a digital teacher fix
 - Express
 - OpenAI API
 
-## Backend Setup
+## Backend Setup local computer
 
 Create a `.env` file in the `api` directory with the following content:
 
@@ -26,6 +28,12 @@ Create a `.env` file in the `api` directory with the following content:
 PORT=3005
 OPENAI_KEY=your_openai_api_key_here
 ```
+
+Create a `env` file in the `frontend` directory with the following content:
+
+```env
+VITE_CLOUDFLARE_R2_SENTENCES_URL=https://identifier-numbers.r2.dev/filename.json
+VITE_CLOUDFLARE_WORKER_URL=https://workerinstance-name.profile-name.workers.dev/
 
 Start the development server:
 
@@ -37,7 +45,7 @@ npm run dev
 
 The server will start on port 3005 by default.
 
-## Frontend Setup
+## Frontend Setup on local computer
 
 Create a `sentences.js` file in the `frontend/learning-material` directory based on the example file `sentences-example.js`.
 
@@ -48,6 +56,18 @@ npm run dev
 ```
 
 The frontend will start on port 3000 by default.
+
+## Production deployment
+
+For production deployment I recommend you using
+
+- Vercel for frontend
+- Digital Ocean for the API
+- Cloudflare R2 and Worker to provide the sentences or use Database for a more robust version
+
+For R2 you may need a Worker, you can find an implementation here: `r2Worker/worker.js`.
+
+Don't forget to set the `environmental variables` for both the UI and the API.
 
 ## API Endpoints
 

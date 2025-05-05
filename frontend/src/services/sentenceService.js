@@ -1,11 +1,11 @@
 export const fetchSentences = async signal => {
   const r2Url = import.meta.env.VITE_CLOUDFLARE_R2_SENTENCES_URL;
+  const workerUrl = import.meta.env.VITE_CLOUDFLARE_WORKER_URL;
 
   // Try Cloudflare R2 first
-  if (r2Url) {
+  if (r2Url && workerUrl) {
     try {
-      // Use a more reliable CORS proxy
-      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(r2Url)}`;
+      const proxyUrl = `${workerUrl}?url=${encodeURIComponent(r2Url)}`;
       const response = await fetch(proxyUrl, {
         signal,
       });
