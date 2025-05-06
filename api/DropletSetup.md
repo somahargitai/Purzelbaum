@@ -33,6 +33,9 @@ cat .ssh/id_ed25519.pub
 npm install -g pm2 # install PM2 globally
 ufw allow 3005 # allow the API port
 ufw allow OpenSSH # allow SSH if using firewall
+ufw allow ssh
+ufw allow http
+ufw allow https
 ufw enable # enable the firewall
 ufw status 
 
@@ -50,4 +53,30 @@ pm2 status # check if API is running
 
 curl http://localhost:3005/hello
 pm2 logs purzel-api # view logs if needed
+```
+
+## nginx
+
+```bash
+sudo apt install nginx
+sudo apt install certbot python3-certbot-nginx
+nano /etc/nginx/sites-available/purzelbaum  # create a new file for nginx settings
+```
+
+Paste:
+
+```bash
+server {
+    listen 80;
+    server_name yourdomain.com;
+
+    location / {
+        proxy_pass http://localhost:3005;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
 ```

@@ -214,7 +214,7 @@ const TranslateSentence = () => {
               </h4>
               <ul className="list-disc pl-5">
                 {analysis.incorrectConjugations.map((item, index) => (
-                  <li key={`incorrect-${index}`} className="pl-5 text-xl text-white">
+                  <li key={`incorrect-${index}`} className="pl-5 text-xl text-foreground">
                     {item}
                   </li>
                 ))}

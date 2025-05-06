@@ -1,12 +1,25 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Sun, Moon, Monitor } from 'lucide-react';
+import { useTheme } from '../contexts/ThemeContext';
 
 const NavigationBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { theme, cycleTheme } = useTheme();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const getThemeIcon = () => {
+    switch (theme) {
+      case 'light':
+        return <Sun className="h-5 w-5" />;
+      case 'dark':
+        return <Moon className="h-5 w-5" />;
+      default:
+        return <Monitor className="h-5 w-5" />;
+    }
   };
 
   return (
@@ -36,7 +49,7 @@ const NavigationBar = () => {
                 </Link>
               </div>
             </div>
-            <div className="flex space-x-8">
+            <div className="flex items-center space-x-8">
               <Link to="/" className="hover:text-primary font-bold transition-colors">
                 Home
               </Link>
@@ -46,6 +59,13 @@ const NavigationBar = () => {
               <Link to="/about" className="hover:text-primary font-bold transition-colors">
                 About
               </Link>
+              <button
+                onClick={cycleTheme}
+                className="rounded-lg p-2.5 text-sm bg-background text-foreground hover:bg-[#242424] hover:text-white dark:hover:bg-[#8b5cf6] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 border border-border transition-all hover:scale-105"
+                aria-label="Toggle theme"
+              >
+                {getThemeIcon()}
+              </button>
             </div>
           </div>
         </div>
@@ -64,9 +84,18 @@ const NavigationBar = () => {
                 Purzelbaum
               </Link>
             </div>
-            <button onClick={toggleMenu} aria-label="Toggle menu" className="p-2 focus:outline-none">
-              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={cycleTheme}
+                className="rounded-lg p-2.5 text-sm bg-background text-foreground hover:bg-[#242424] hover:text-white dark:hover:bg-[#8b5cf6] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 border border-border transition-all hover:scale-105"
+                aria-label="Toggle theme"
+              >
+                {getThemeIcon()}
+              </button>
+              <button onClick={toggleMenu} aria-label="Toggle menu" className="p-2 focus:outline-none">
+                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              </button>
+            </div>
           </div>
 
           {isMenuOpen && (
