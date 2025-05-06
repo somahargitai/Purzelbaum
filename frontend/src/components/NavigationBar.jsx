@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X, Sun, Moon, Monitor } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
+import LanguageSelector from './LanguageSelector';
 
 const NavigationBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -59,6 +60,7 @@ const NavigationBar = () => {
               <Link to="/about" className="hover:text-primary font-bold transition-colors">
                 About
               </Link>
+              <LanguageSelector />
               <button
                 onClick={cycleTheme}
                 className="rounded-lg p-2.5 text-sm bg-background text-foreground hover:bg-[#242424] hover:text-white dark:hover:bg-[#8b5cf6] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 border border-border transition-all hover:scale-105"
@@ -85,6 +87,7 @@ const NavigationBar = () => {
               </Link>
             </div>
             <div className="flex items-center space-x-4">
+              <LanguageSelector />
               <button
                 onClick={cycleTheme}
                 className="rounded-lg p-2.5 text-sm bg-background text-foreground hover:bg-[#242424] hover:text-white dark:hover:bg-[#8b5cf6] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 border border-border transition-all hover:scale-105"
