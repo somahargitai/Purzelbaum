@@ -1,152 +1,59 @@
 import { useEffect, useState } from 'react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const AnimatedTextComparison = ({ userInput, correctTranslation }) => {
-  const delay = 100;
-
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isComplete, setIsComplete] = useState(false);
-  const [displayedComparison, setDisplayedComparison] = useState([]);
+  const [displayedText, setDisplayedText] = useState('');
+  const [isAnimating, setIsAnimating] = useState(true);
+  const { targetLanguage } = useLanguage();
 
   useEffect(() => {
-    if (currentIndex < userInput.length) {
-      const timer = setTimeout(() => {
-        setCurrentIndex(prev => prev + 1);
-        const currentUserInput = userInput.slice(0, currentIndex + 1);
-        const currentComparison = compareTexts(currentUserInput, correctTranslation);
-        setDisplayedComparison(currentComparison);
-      }, delay);
-
-      return () => clearTimeout(timer);
-    } else {
-      setIsComplete(true);
-    }
-  }, [currentIndex, userInput, correctTranslation]);
-
-  const compareTexts = (userText, correctText) => {
-    const userWords = userText.split(' ');
-    const correctWords = correctText.split(' ');
-    const result = [];
-
-    for (let i = 0; i < Math.max(userWords.length, correctWords.length); i++) {
-      const userWord = userWords[i] || '';
-      const correctWord = correctWords[i] || '';
-
-      if (userWord === correctWord) {
-        result.push(
-          <span key={`word-${i}`} className="text-green-600">
-            {userWord}
-          </span>
-        );
+    let currentIndex = 0;
+    const text = correctTranslation;
+    const interval = setInterval(() => {
+      if (currentIndex <= text.length) {
+        setDisplayedText(text.slice(0, currentIndex));
+        currentIndex++;
       } else {
-        // Render the incorrect word with strikethrough
-        const incorrectWord = [];
-        for (let j = 0; j < userWord.length; j++) {
-          const char = userWord[j];
-          incorrectWord.push(
-            <span
-              key={`incorrect-${i}-${j}`}
-              className="text-red-700 line-through"
-            >
-              {char}
-            </span>
-          );
-        }
-
-        // Render the correct word character by character
-        const correctWordChars = [];
-        for (let j = 0; j < correctWord.length; j++) {
-          const char = correctWord[j];
-          const isExistingChar = j < userWord.length && char === userWord[j];
-          correctWordChars.push(
-            <span
-              key={`correct-${i}-${j}`}
-              className={isExistingChar ? 'text-yellow-500' : 'text-red-500'}
-            >
-              {char}
-            </span>
-          );
-        }
-
-        result.push(
-          <span key={`word-${i}`} className="inline-flex items-baseline">
-            <span className="mr-2">{incorrectWord}</span>
-            <span>{correctWordChars}</span>
-          </span>
-        );
+        setIsAnimating(false);
+        clearInterval(interval);
       }
+    }, 50);
 
-      // Add space after each word except the last one
-      if (i < Math.max(userWords.length, correctWords.length) - 1) {
-        result.push(' ');
-      }
-    }
-
-    return result;
-  };
+    return () => clearInterval(interval);
+  }, [correctTranslation]);
 
   const renderComparison = () => {
-    const userWords = userInput.split(' ');
+    const words = userInput.split(' ');
     const correctWords = correctTranslation.split(' ');
-    const result = [];
+    const maxLength = Math.max(words.length, correctWords.length);
 
-    for (let i = 0; i < Math.max(userWords.length, correctWords.length); i++) {
-      const userWord = userWords[i] || '';
+    return Array.from({ length: maxLength }, (_, i) => {
+      const userWord = words[i] || '';
       const correctWord = correctWords[i] || '';
+      const isCorrect = userWord.toLowerCase() === correctWord.toLowerCase();
 
-      if (userWord === correctWord) {
-        result.push(
-          <span key={`word-${i}`} className="text-green-600">
-            {userWord}
-          </span>
-        );
-      } else {
-        // Render the incorrect word with strikethrough
-        const incorrectWord = [];
-        for (let j = 0; j < userWord.length; j++) {
-          const char = userWord[j];
-          incorrectWord.push(
-            <span
-              key={`incorrect-${i}-${j}`}
-              className="text-red-900 line-through"
-            >
-              {char}
-            </span>
-          );
-        }
-
-        // Render the correct word character by character
-        const correctWordChars = [];
-        for (let j = 0; j < correctWord.length; j++) {
-          const char = correctWord[j];
-          const isExistingChar = j < userWord.length && char === userWord[j];
-          correctWordChars.push(
-            <span
-              key={`correct-${i}-${j}`}
-              className={isExistingChar ? 'text-yellow-500' : 'text-red-300'}
-            >
-              {char}
-            </span>
-          );
-        }
-
-        result.push(
-          <span key={`word-${i}`} className="inline-flex items-baseline">
-            <span className="mr-2">{incorrectWord}</span>
-            <span>{correctWordChars}</span>
-          </span>
-        );
-      }
-
-      // Add space after each word except the last one
-      if (i < Math.max(userWords.length, correctWords.length) - 1) {
-        result.push(' ');
-      }
-    }
-
-    return <p>{result}</p>;
+      return (
+        <span
+          key={i}
+          className={`mr-2 inline-block ${
+            isCorrect ? 'text-green-500' : 'text-red-500'
+          }`}
+        >
+          {isCorrect ? userWord : correctWord}
+        </span>
+      );
+    });
   };
 
-  return <div className="font-oswald text-5xl text-left">{isComplete ? renderComparison() : <p>{displayedComparison}</p>}</div>;
+  return (
+    <div className="font-oswald text-5xl">
+      {isAnimating ? (
+        <span className="text-gray-300">{displayedText}</span>
+      ) : (
+        renderComparison()
+      )}
+    </div>
+  );
 };
 
 export default AnimatedTextComparison;

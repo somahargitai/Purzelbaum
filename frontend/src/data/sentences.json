@@ -1,0 +1,22 @@
+{
+  "sentences": [
+    {
+      "id": 1,
+      "de": "Ich lerne jeden Tag neue Wörter",
+      "hu": "Minden nap új szavakat tanulok",
+      "en": "I learn new words every day"
+    },
+    {
+      "id": 2,
+      "de": "Wir fahren morgen in die Berge",
+      "hu": "Holnap a hegyekbe megyünk",
+      "en": "We are going to the mountains tomorrow"
+    },
+    {
+      "id": 3,
+      "de": "Kannst du mir bitte helfen?",
+      "hu": "Tudnál segíteni nekem?",
+      "en": "Could you please help me?"
+    }
+  ]
+} 

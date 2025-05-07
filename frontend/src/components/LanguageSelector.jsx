@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Languages } from 'lucide-react';
 import {
   DropdownMenu,
@@ -10,17 +9,32 @@ import {
 } from './ui/dropdown-menu';
 import { ToggleGroup, ToggleGroupItem } from './ui/toggle-group';
 import { GB, DE, HU } from './icons';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const LanguageSelector = () => {
-  const [appLanguage, setAppLanguage] = useState('en');
-  const [sourceLanguage, setSourceLanguage] = useState('de');
-  const [targetLanguage, setTargetLanguage] = useState('hu');
+  const { sourceLanguage, setSourceLanguage, targetLanguage, setTargetLanguage } = useLanguage();
 
   const languages = [
     { code: 'en', flag: GB, name: 'English' },
     { code: 'de', flag: DE, name: 'German' },
     { code: 'hu', flag: HU, name: 'Hungarian' },
   ];
+
+  const handleSourceLanguageChange = (value) => {
+    if (value && value !== targetLanguage) {
+      setSourceLanguage(value);
+    }
+  };
+
+  const handleTargetLanguageChange = (value) => {
+    if (value && value !== sourceLanguage) {
+      setTargetLanguage(value);
+    }
+  };
+
+  const getSelectedLanguageName = (code) => {
+    return languages.find(lang => lang.code === code)?.name || code;
+  };
 
   return (
     <DropdownMenu>
@@ -37,26 +51,22 @@ const LanguageSelector = () => {
         <DropdownMenuSeparator />
         
         <DropdownMenuGroup>
-          <DropdownMenuLabel>Application Language</DropdownMenuLabel>
-          <div className="p-2">
-            <ToggleGroup type="single" value={appLanguage} onValueChange={setAppLanguage} className="justify-start">
-              {languages.map((lang) => (
-                <ToggleGroupItem key={lang.code} value={lang.code} aria-label={lang.name}>
-                  <lang.flag />
-                </ToggleGroupItem>
-              ))}
-            </ToggleGroup>
-          </div>
-        </DropdownMenuGroup>
-
-        <DropdownMenuSeparator />
-
-        <DropdownMenuGroup>
           <DropdownMenuLabel>Source Language</DropdownMenuLabel>
           <div className="p-2">
-            <ToggleGroup type="single" value={sourceLanguage} onValueChange={setSourceLanguage} className="justify-start">
+            <ToggleGroup 
+              type="single" 
+              value={sourceLanguage} 
+              onValueChange={handleSourceLanguageChange} 
+              className="justify-start"
+            >
               {languages.map((lang) => (
-                <ToggleGroupItem key={lang.code} value={lang.code} aria-label={lang.name}>
+                <ToggleGroupItem 
+                  key={lang.code} 
+                  value={lang.code} 
+                  aria-label={lang.name}
+                  disabled={lang.code === targetLanguage}
+                  className="data-[state=on]:bg-[#8b5cf6] data-[state=on]:text-white dark:data-[state=on]:bg-[#8b5cf6] dark:data-[state=on]:text-white"
+                >
                   <lang.flag />
                 </ToggleGroupItem>
               ))}
@@ -69,25 +79,26 @@ const LanguageSelector = () => {
         <DropdownMenuGroup>
           <DropdownMenuLabel>Target Language</DropdownMenuLabel>
           <div className="p-2">
-            <ToggleGroup type="single" value={targetLanguage} onValueChange={setTargetLanguage} className="justify-start">
+            <ToggleGroup 
+              type="single" 
+              value={targetLanguage} 
+              onValueChange={handleTargetLanguageChange} 
+              className="justify-start"
+            >
               {languages.map((lang) => (
-                <ToggleGroupItem key={lang.code} value={lang.code} aria-label={lang.name}>
+                <ToggleGroupItem 
+                  key={lang.code} 
+                  value={lang.code} 
+                  aria-label={lang.name}
+                  disabled={lang.code === sourceLanguage}
+                  className="data-[state=on]:bg-[#8b5cf6] data-[state=on]:text-white dark:data-[state=on]:bg-[#8b5cf6] dark:data-[state=on]:text-white"
+                >
                   <lang.flag />
                 </ToggleGroupItem>
               ))}
             </ToggleGroup>
           </div>
         </DropdownMenuGroup>
-
-        <DropdownMenuSeparator />
-        
-        <div className="flex justify-end p-2">
-          <button
-            className="rounded-lg bg-[#242424] text-white px-4 py-2 text-sm font-medium hover:bg-[#8b5cf6] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 transition-colors"
-          >
-            Apply
-          </button>
-        </div>
       </DropdownMenuContent>
     </DropdownMenu>
   );

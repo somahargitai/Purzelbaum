@@ -5,9 +5,11 @@ import { currentSentenceAtom, sentenceAnalysisAtom, isLoadingAtom, errorAtom } f
 import AnimatedTextComparison from '../components/AnimatedTextComparison';
 import Button from '../components/Button';
 import { fetchSentences } from '../services/sentenceService';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const TranslateSentence = () => {
   const apiUrl = import.meta.env.VITE_API_URL;
+  const { sourceLanguage, targetLanguage } = useLanguage();
 
   const [sentence, setSentence] = useAtom(currentSentenceAtom);
   const [analysis, setAnalysis] = useAtom(sentenceAnalysisAtom);
@@ -36,7 +38,6 @@ const TranslateSentence = () => {
         const randomIndex = Math.floor(Math.random() * sentences.length);
         setSentence(sentences[randomIndex]);
       } catch (err) {
-        // Only set error if it's not an abort error
         if (err.name !== 'AbortError') {
           setError(err.message);
         }
@@ -76,8 +77,8 @@ const TranslateSentence = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          original: sentence.sentence,
-          correct: sentence.translation,
+          original: sentence[sourceLanguage],
+          correct: sentence[targetLanguage],
           userInput: userInput,
         }),
       });
@@ -98,7 +99,6 @@ const TranslateSentence = () => {
   const handleSubmit = e => {
     e.preventDefault();
     setIsSubmitted(true);
-    // Focus the Next button after a short delay to ensure it's rendered
     setTimeout(() => {
       nextButtonRef.current?.focus();
     }, 100);
@@ -109,7 +109,6 @@ const TranslateSentence = () => {
       if (!isSubmitted) {
         handleSubmit(e);
       } else {
-        // If already submitted, pressing Enter should trigger the Next button
         handleNext();
       }
     }
@@ -139,10 +138,13 @@ const TranslateSentence = () => {
   return (
     <div className="w-full p-4">
       <h2 className="mb-2 text-left font-bold">Translate the Sentence</h2>
-      <p className="font-oswald text-left text-5xl">{sentence.sentence}</p>
+      <p className="font-oswald text-left text-5xl">{sentence[sourceLanguage]}</p>
       {isSubmitted ? (
         <div className="mt-4 mb-8 w-full text-left">
-          <AnimatedTextComparison userInput={userInput} correctTranslation={sentence.translation} />
+          <AnimatedTextComparison 
+            userInput={userInput} 
+            correctTranslation={sentence[targetLanguage]} 
+          />
         </div>
       ) : (
         <>
@@ -165,7 +167,6 @@ const TranslateSentence = () => {
         </>
       )}
 
-      {/* Control buttons */}
       <div className="flex justify-center gap-4">
         {isSubmitted ? (
           <Button
