@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useAtom } from 'jotai';
 import { Check, ArrowRight, Search, Loader2, AlertCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { currentSentenceAtom, sentenceAnalysisAtom, isLoadingAtom, errorAtom } from '../atoms/sentenceAtoms';
 import AnimatedTextComparison from '../components/AnimatedTextComparison';
 import Button from '../components/Button';
@@ -8,6 +9,7 @@ import { fetchSentences } from '../services/sentenceService';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const TranslateSentence = () => {
+  const { t } = useTranslation();
   const apiUrl = import.meta.env.VITE_API_URL;
   const { sourceLanguage, targetLanguage } = useLanguage();
 
@@ -137,7 +139,7 @@ const TranslateSentence = () => {
 
   return (
     <div className="w-full p-4">
-      <h2 className="mb-2 text-left font-bold">Translate the Sentence</h2>
+      <h2 className="mb-2 text-left font-bold">{t('translateSentence.title')}</h2>
       <p className="font-oswald text-left text-5xl">{sentence[sourceLanguage]}</p>
       {isSubmitted ? (
         <div className="mt-4 mb-8 w-full text-left">

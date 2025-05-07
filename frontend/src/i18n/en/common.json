@@ -1,0 +1,10 @@
+{
+  "translateSentence": {
+    "title": "Translate the Sentence"
+  },
+  "navigation": {
+    "home": "Home",
+    "translateSentence": "Translate Sentence",
+    "about": "About"
+  }
+}

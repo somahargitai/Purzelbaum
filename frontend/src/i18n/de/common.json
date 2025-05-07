@@ -1,0 +1,11 @@
+{
+    "translateSentence": {
+      "title": "Übersetze den Satz"
+    },
+    "navigation": {
+      "home": "Startseite",
+      "translateSentence": "Satz übersetzen",
+      "about": "Über uns"
+    }
+  }
+  

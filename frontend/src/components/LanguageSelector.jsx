@@ -1,4 +1,5 @@
 import { Languages } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,70 +8,65 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
-import { ToggleGroup, ToggleGroupItem } from './ui/toggle-group';
-import { GB, DE, HU } from './icons';
 import { useLanguage } from '../contexts/LanguageContext';
+import LanguageToggleGroup from './LanguageToggleGroup';
 
 const LanguageSelector = () => {
   const { sourceLanguage, setSourceLanguage, targetLanguage, setTargetLanguage } = useLanguage();
+  const { i18n } = useTranslation();
 
-  const languages = [
-    { code: 'en', flag: GB, name: 'English' },
-    { code: 'de', flag: DE, name: 'German' },
-    { code: 'hu', flag: HU, name: 'Hungarian' },
-  ];
-
-  const handleSourceLanguageChange = (value) => {
+  const handleSourceLanguageChange = value => {
     if (value && value !== targetLanguage) {
       setSourceLanguage(value);
     }
   };
 
-  const handleTargetLanguageChange = (value) => {
+  const handleTargetLanguageChange = value => {
     if (value && value !== sourceLanguage) {
       setTargetLanguage(value);
     }
   };
 
-  const getSelectedLanguageName = (code) => {
-    return languages.find(lang => lang.code === code)?.name || code;
+  const handleAppLanguageChange = value => {
+    if (value) {
+      i18n.changeLanguage(value);
+    }
   };
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
-          className="rounded-lg p-2.5 text-sm bg-background text-foreground hover:bg-[#242424] hover:text-white dark:hover:bg-[#8b5cf6] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 border border-border transition-all hover:scale-105"
+          className="bg-background text-foreground focus-visible:ring-primary/20 border-border rounded-lg border p-2.5 text-sm transition-all hover:scale-105 hover:bg-[#242424] hover:text-white focus:outline-none focus-visible:ring-2 dark:hover:bg-[#8b5cf6]"
           aria-label="Select language"
         >
           <Languages className="h-5 w-5" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-80 mr-4 mt-2">
+      <DropdownMenuContent className="mt-2 mr-4 w-80">
         <DropdownMenuLabel>Language Settings</DropdownMenuLabel>
         <DropdownMenuSeparator />
         
         <DropdownMenuGroup>
+          <DropdownMenuLabel>App Language</DropdownMenuLabel>
+          <div className="p-2">
+            <LanguageToggleGroup 
+              value={i18n.language}
+              onValueChange={handleAppLanguageChange}
+            />
+          </div>
+        </DropdownMenuGroup>
+
+        <DropdownMenuSeparator />
+
+        <DropdownMenuGroup>
           <DropdownMenuLabel>Source Language</DropdownMenuLabel>
           <div className="p-2">
-            <ToggleGroup 
-              type="single" 
-              value={sourceLanguage} 
-              onValueChange={handleSourceLanguageChange} 
-              className="justify-start"
-            >
-              {languages.map((lang) => (
-                <ToggleGroupItem 
-                  key={lang.code} 
-                  value={lang.code} 
-                  aria-label={lang.name}
-                  disabled={lang.code === targetLanguage}
-                  className="data-[state=on]:bg-[#8b5cf6] data-[state=on]:text-white dark:data-[state=on]:bg-[#8b5cf6] dark:data-[state=on]:text-white"
-                >
-                  <lang.flag />
-                </ToggleGroupItem>
-              ))}
-            </ToggleGroup>
+            <LanguageToggleGroup 
+              value={sourceLanguage}
+              onValueChange={handleSourceLanguageChange}
+              disabledValue={targetLanguage}
+            />
           </div>
         </DropdownMenuGroup>
 
@@ -79,24 +75,11 @@ const LanguageSelector = () => {
         <DropdownMenuGroup>
           <DropdownMenuLabel>Target Language</DropdownMenuLabel>
           <div className="p-2">
-            <ToggleGroup 
-              type="single" 
-              value={targetLanguage} 
-              onValueChange={handleTargetLanguageChange} 
-              className="justify-start"
-            >
-              {languages.map((lang) => (
-                <ToggleGroupItem 
-                  key={lang.code} 
-                  value={lang.code} 
-                  aria-label={lang.name}
-                  disabled={lang.code === sourceLanguage}
-                  className="data-[state=on]:bg-[#8b5cf6] data-[state=on]:text-white dark:data-[state=on]:bg-[#8b5cf6] dark:data-[state=on]:text-white"
-                >
-                  <lang.flag />
-                </ToggleGroupItem>
-              ))}
-            </ToggleGroup>
+            <LanguageToggleGroup 
+              value={targetLanguage}
+              onValueChange={handleTargetLanguageChange}
+              disabledValue={sourceLanguage}
+            />
           </div>
         </DropdownMenuGroup>
       </DropdownMenuContent>
@@ -104,4 +87,4 @@ const LanguageSelector = () => {
   );
 };
 
-export default LanguageSelector; 
+export default LanguageSelector;

@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X, Sun, Moon, Monitor } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../contexts/ThemeContext';
 import LanguageSelector from './LanguageSelector';
 
 const NavigationBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { theme, cycleTheme } = useTheme();
+  const { t } = useTranslation();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -52,13 +54,13 @@ const NavigationBar = () => {
             </div>
             <div className="flex items-center space-x-8">
               <Link to="/" className="hover:text-primary font-bold transition-colors">
-                Home
+                {t('navigation.home')}
               </Link>
               <Link to="/translate-sentence" className="hover:text-primary font-bold transition-colors">
-                Translate Sentence
+                {t('navigation.translateSentence')}
               </Link>
               <Link to="/about" className="hover:text-primary font-bold transition-colors">
-                About
+                {t('navigation.about')}
               </Link>
               <LanguageSelector />
               <button
@@ -118,7 +120,7 @@ const NavigationBar = () => {
                     className="hover:text-primary py-2 text-3xl text-white transition-colors"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    Home
+                    {t('navigation.home')}
                   </Link>
 
                   <Link
@@ -126,14 +128,14 @@ const NavigationBar = () => {
                     className="hover:text-primary py-2 text-3xl text-white transition-colors"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    About
+                    {t('navigation.about')}
                   </Link>
                   <Link
                     to="/translate-sentence"
                     className="hover:text-primary py-2 text-3xl text-white transition-colors"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    Translate Sentence
+                    {t('navigation.translateSentence')}
                   </Link>
                 </div>
               </div>

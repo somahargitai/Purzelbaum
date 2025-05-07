@@ -1,0 +1,10 @@
+{
+  "translateSentence": {
+    "title": "Fordítsd le a mondatot"
+  },
+  "navigation": {
+    "home": "Főoldal",
+    "translateSentence": "Mondat fordítás",
+    "about": "Rólunk"
+  }
+}
