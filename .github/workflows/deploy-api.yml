@@ -20,7 +20,13 @@ jobs:
           username: root
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            cd /var/www/purzelbaum/api
+            # Navigate to the existing repository and pull latest changes
+            cd /var/www/Purzelbaum
             git pull origin main
+            
+            # Navigate to API directory and install dependencies
+            cd /var/www/Purzelbaum/api
             npm install --omit=dev
-            pm2 reload api/ecosystem.config.cjs
+            
+            # Reload PM2 with the correct path (we're already in api directory)
+            pm2 reload ecosystem.config.cjs
