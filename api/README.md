@@ -1,3 +1,2 @@
 # Test trigger
 
-Trigger test
