@@ -1,9 +1,14 @@
-import express from 'express';
-import { analyzeSentence, explainTranslation } from '../controllers/openaiController.js';
+import express from "express";
+import {
+  analyzeSentence,
+  explainTranslation,
+  freeTalk,
+} from "../controllers/openaiController.js";
 
 const router = express.Router();
 
-router.post('/analyze', analyzeSentence);
-router.post('/explainTranslation', explainTranslation);
+router.post("/analyze", analyzeSentence);
+router.post("/explainTranslation", explainTranslation);
+router.post("/freeTalk", freeTalk);
 
-export default router; 
+export default router;

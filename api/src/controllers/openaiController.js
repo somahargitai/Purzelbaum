@@ -1,5 +1,5 @@
-import OpenAI from 'openai';
-import dotenv from 'dotenv';
+import OpenAI from "openai";
+import dotenv from "dotenv";
 
 dotenv.config();
 
@@ -14,21 +14,22 @@ export const analyzeSentence = async (req, res) => {
     const completion = await openai.chat.completions.create({
       messages: [
         {
-          role: 'system',
-          content: 'You are a German language teacher. Analyze the given German sentence and explain its grammar, focusing on conjugations, cases, and word order.',
+          role: "system",
+          content:
+            "You are a German language teacher. Analyze the given German sentence and explain its grammar, focusing on conjugations, cases, and word order.",
         },
         {
-          role: 'user',
+          role: "user",
           content: `Analyze this German sentence: ${sentence}`,
         },
       ],
-      model: 'gpt-4',
+      model: "gpt-4",
     });
 
     res.json({ analysis: completion.choices[0].message.content });
   } catch (error) {
-    console.error('Error analyzing sentence:', error);
-    res.status(500).json({ error: 'Failed to analyze sentence' });
+    console.error("Error analyzing sentence:", error);
+    res.status(500).json({ error: "Failed to analyze sentence" });
   }
 };
 
@@ -39,7 +40,7 @@ export const explainTranslation = async (req, res) => {
     const completion = await openai.chat.completions.create({
       messages: [
         {
-          role: 'system',
+          role: "system",
           content: `You are a German language teacher. Analyze the translation and provide a list of correct and incorrect conjugations.
 Focus on:
 - Noun cases (nominative, accusative, dative, genitive)
@@ -58,19 +59,28 @@ Format the response as a JSON object with two arrays:
 IMPORTANT: Respond ONLY with the JSON object, no additional text.`,
         },
         {
-          role: 'user',
+          role: "user",
           content: `Original sentence: ${original}
 Correct translation: ${correct}
 User's translation: ${userInput}`,
         },
       ],
-      model: 'gpt-4',
+      model: "gpt-4",
     });
 
     const response = JSON.parse(completion.choices[0].message.content);
     res.json(response);
   } catch (error) {
-    console.error('Error explaining translation:', error);
-    res.status(500).json({ error: 'Failed to analyze translation' });
+    console.error("Error explaining translation:", error);
+    res.status(500).json({ error: "Failed to analyze translation" });
   }
-}; 
+};
+
+export const freeTalk = async (req, res) => {
+  try {
+    const { message } = req.body;
+  } catch (error) {
+    console.error("Error in freeTalk:", error);
+    res.status(500).json({ error: "Failed to process free talk" });
+  }
+};
