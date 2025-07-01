@@ -79,6 +79,23 @@ User's translation: ${userInput}`,
 export const freeTalk = async (req, res) => {
   try {
     const { message } = req.body;
+
+    const completion = await openai.chat.completions.create({
+      messages: [
+        {
+          role: "system",
+          content: "you are a helpful assistant",
+        },
+        {
+          role: "user",
+          content: message,
+        },
+      ],
+      model: "gpt-4",
+    });
+
+    const response = completion.choices[0].message.content;
+    res.json(response);
   } catch (error) {
     console.error("Error in freeTalk:", error);
     res.status(500).json({ error: "Failed to process free talk" });
